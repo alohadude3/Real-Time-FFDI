@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://www.gstatic.com/firebasejs/3.7.4/firebase.js"></script>
+	<script>
+	  // Initialize Firebase
+	  var config = {
+		apiKey: "AIzaSyDNJLF-6_s-PNWnmhJImHbGcqPezzBidSg",
+		authDomain: "fit3140assignment2.firebaseapp.com",
+		databaseURL: "https://fit3140assignment2.firebaseio.com",
+		projectId: "fit3140assignment2",
+		storageBucket: "fit3140assignment2.appspot.com",
+		messagingSenderId: "605405551904"
+	  };
+	  firebase.initializeApp(config);
+	</script>
+    <script src="/js/jquery-3.1.1.min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+	<!--<script src="/socket.io/socket.io.js"></script>-->
+	<script src="/js/firebaseWebApi.js"></script>
+	
+	<meta charset="UTF-8">
+	<title>Real-Time FFDI</title>
+	<!-- Bootstrap Core CSS -->
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/stylesheet.css" rel="stylesheet">
+</head>
+<header>
+<!-- Heading -->
+    <div>
+        <header>Real-Time McArthur Forest Fire Danger Index</header>
+    </div>
+</header>
+<body>
+		<div class ="container">
+				<p>
+					<body>Longitude:<br></body>
+					<input type="number" class="inputBox" name="longitude">
+				</p>
+				<p>
+					<body>Latitude:<br></body>
+					<input type="number" class="inputBox" name="latitude">
+				</p>
+		</div>
+		<div class="buttonContainer">
+		<button onclick=retrieveData() type="button" class="btn btn-primary center" id="resetbutton">Retrieve Climate Data</button>
+		</div>
+    </div>
+</body>
+</html>
