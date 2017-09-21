@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<script src="./js/jquery-3.1.1.min.js"></script>
+	<script src="./js/bootstrap.min.js"></script>
+	<script src="./js/socket.io.js"></script>
+	<script src="./js/functions.js"></script>
+	
+	<meta charset="UTF-8">
+	<title>Real-Time FFDI</title>
+	<!-- Bootstrap Core CSS -->
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/stylesheet.css" rel="stylesheet">
+</head>
+<header>
+<!-- Heading -->
+	<div>
+		<header>Real-Time McArthur Forest Fire Danger Index</header>
+	</div>
+</header>
+<body>
+	<div class="sectionContainer">
+		<h4>Longitude:<br></h4>
+		<div class="radio">
+			<label><input id="radioNorth" type="radio" name="long" value="north" checked>North</label>
+			<label><input id="radioSouth" type="radio" name="long" value="south">South</label>
+		</div>
+		<div class="col-sm-4">
+				<label for="longD">Degrees</label>
+				<input id="longD" type="text" onkeypress="validateLongLat(event)" class="form-control inputBox" name="longD">
+				<span id="longDError" class="help-block"></span>
+		</div>
+		<div class="col-sm-4">
+				<label for"longM">Minutes</label>
+				<input id="longM" type="text" onkeypress="validateLongLat(event)" class="form-control inputBox" name="longM">
+				<span id="longMError" class="help-block"></span>
+		</div>
+		<div class="col-sm-4">
+				<label for"longS">Seconds</label>
+				<input id="longS" type="text" onkeypress="validateLongLat(event)" class="form-control inputBox" name="longS">
+				<span id="longSError" class="help-block"></span>
+		</div>
+	</div>
+	<div class="sectionContainer">
+		<h4>Latitude:<br></h4>
+		<div class="radio">
+			<label><input id="radioEast" type="radio" name="lat" value="east" checked>East</label>
+			<label><input id="radioWest" type="radio" name="lat" value="west">West</label>
+		</div>
+		<div class="col-sm-4">
+			<label for"latD">Degrees</label>
+			<input id="latD" type="text" onkeypress="validateLongLat(event)" class="form-control inputBox" name="latD">
+			<span id="latDError" class="help-block"></span>
+		</div>
+		<div class="col-sm-4">
+			<label for"latM">Minutes</label>
+			<input id="latM" type="text" onkeypress="validateLongLat(event)" class="form-control inputBox" name="latM">
+			<span id="latMError" class="help-block"></span>
+		</div>
+		<div class="col-sm-4">
+			<label for"latS">Seconds</label>
+			<input id="latS" type="text" onkeypress="validateLongLat(event)" class="form-control inputBox" name="latS">
+			<span id="latSError" class="help-block"></span>
+		</div>
+	</div>
+	<div class="sectionContainer">
+		<div class="buttonContainer">
+			<button onclick=retrieveData() type="button" class="btn btn-primary center" id="resetbutton">Retrieve Climate Data</button>
+		</div>
+	</div>
+</body>
+</html>

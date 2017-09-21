@@ -1,0 +1,72 @@
+body
+{ 
+	margin:0;
+	font: 16px arial, sans-serif;
+	background-color: #fff;
+}
+
+title
+{
+	margin:0;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	font: 24px arial, sans-serif;
+	background-color: #fff;
+}
+
+header
+{
+	padding-top: 20px;
+	padding-bottom: 10px;
+	margin-bottom: 30px;
+	background-color: #d9534f;
+	color: #fff;
+	font: 48px arial, sans-serif;
+	text-align: center;
+}
+
+red
+{
+	color: red;
+}
+
+.sectionContainer
+{
+	width: 80%;
+	overflow: hidden;
+	padding: 10px 1% 10px 1%;
+	margin: auto;
+	background-color: #fff;
+}
+
+.buttonContainer
+{
+	text-align: center;
+	width: 100%;
+	margin: auto;
+}
+
+.center
+{
+	margin: auto;
+}
+
+.align-left
+{
+	text-align: left;
+}
+
+.align-right
+{
+	text-align: right;
+}
+
+.align-center
+{
+	text-align : center;
+}
+
+.inputBox
+{
+	width: 100%;
+}
