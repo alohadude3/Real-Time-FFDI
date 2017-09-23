@@ -1,16 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<script src="https://www.gstatic.com/firebasejs/4.4.0/firebase.js"></script>
+	<script>
+	// Initialize Firebase
+	var config =
+	{
+		apiKey: "AIzaSyDwxAEWqxTVcIpArYKvsseWY2geoIzxcD0",
+		authDomain: "real-time-ffdi.firebaseapp.com",
+		databaseURL: "https://real-time-ffdi.firebaseio.com",
+		projectId: "real-time-ffdi",
+		storageBucket: "real-time-ffdi.appspot.com",
+		messagingSenderId: "1054566349793"
+	};
+	firebase.initializeApp(config);
+	</script>
 	<script src="./js/jquery-3.1.1.min.js"></script>
 	<script src="./js/bootstrap.min.js"></script>
-	<script src="./js/socket.io.js"></script>
 	<script src="./js/functions.js"></script>
 	
 	<meta charset="UTF-8">
 	<title>Real-Time FFDI</title>
 	<!-- Bootstrap Core CSS -->
-	<link href="css/bootstrap.min.css" rel="stylesheet">
-	<link href="css/stylesheet.css" rel="stylesheet">
+	<link href="./css/bootstrap.min.css" rel="stylesheet">
+	<link href="./css/stylesheet.css" rel="stylesheet">
 </head>
 <header>
 <!-- Heading -->
@@ -64,9 +77,13 @@
 		</div>
 	</div>
 	<div class="sectionContainer">
-		<div class="buttonContainer">
-			<button onclick=retrieveData() type="button" class="btn btn-primary center" id="resetbutton">Retrieve Climate Data</button>
-		</div>
+		<form name="formSubmit" action="/ffdi" onsubmit="return validateForm()" method="post">
+			<input hidden id="longitude" type="text" name="longitude">
+			<input hidden id="latitude" type="text" name="latitude">
+			<div class="buttonContainer">
+				<button type="submit" class="btn btn-primary center" id="submitButton">Retrieve Climate Data</button>
+			</div>
+		</form>
 	</div>
 </body>
 </html>

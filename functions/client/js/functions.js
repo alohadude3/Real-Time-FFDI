@@ -1,18 +1,14 @@
 //Start loading everything
 window.onload = function()
 {
-	setup();
-};
-
-function setup()
-{
 	document.getElementById("longD").value = 0;
 	document.getElementById("longM").value = 0;
 	document.getElementById("longS").value = 0;
 	document.getElementById("latD").value = 0;
 	document.getElementById("latM").value = 0;
 	document.getElementById("latS").value = 0;
-}
+	database = firebase.database();
+};
 
 function validateLongLat(event)
 {
@@ -30,7 +26,7 @@ function validateLongLat(event)
 	}
 }
 
-function retrieveData()
+function validateForm()
 {
 	var errors = 0;
 	var longD = document.getElementById("longD").value;
@@ -65,16 +61,21 @@ function retrieveData()
 		{
 			latitude *= -1;
 		}
-		console.log(longitude);
-		console.log(latitude)
 		if (longitude <= -44 || longitude >= -10 || latitude >= 154|| latitude <= 113)
 		{
 			alert("Coordinates must be within Australia.\nNorth bound: 10 degrees.\nSouth bound: -44 degrees.\nEast bound: 154 degrees.\nWest bound: 113 degrees.");
+			return false;
 		}
 		else
 		{
-			//success, query server;
+			document.getElementById("longitude").value = longitude;
+			document.getElementById("latitude").value = latitude;
+			return true;
 		}
+	}
+	else
+	{
+		return false;
 	}
 }
 
@@ -88,7 +89,7 @@ function emptyCheck(input, errorField)
 	if (input == null || input == "")
 	{
 		document.getElementById(errorField).textContent = "Cannot be empty";
-		document.getElementById(errorField).style.color = 'red';
+		document.getElementById(errorField).style.color = "red";
 		return 1;
 	}
 	else
@@ -105,7 +106,7 @@ function rangeCheck(input, errorField)
 		if (input < 0 || input >= 60)
 		{
 			document.getElementById(errorField).textContent = "Must be between 0 and 59 (inclusive)";
-			document.getElementById(errorField).style.color = 'red';
+			document.getElementById(errorField).style.color = "red";
 			return 1;
 		}
 		else
