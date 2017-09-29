@@ -21,7 +21,6 @@ app.post("/ffdi", function(req, res)
 {
 	var user = new Object();
 	user.host = "ftp.bom.gov.au";
-	//user.host = "134.178.253.145";
 	user.longitude = req.body.longitude;
 	user.latitude = req.body.latitude;
 	var tmp = require("tmp");
@@ -33,8 +32,8 @@ app.post("/ffdi", function(req, res)
 		var dbLocation = "./anon/gen/clim_data/IDCKWCDEA0/tables/stations_db.txt";
 		var dataLocation = "./anon/gen/clim_data/IDCKWCDEA0/tables/stations_db.txt";
 		//Temp files for storing downloaded files
-		var databaseFile = tmp.fileSync({dir: "./", postfix: ".txt"});
-		var dataFile = tmp.fileSync({dir: "./", postfix: ".txt"});
+		var databaseFile = tmp.fileSync({dir: "./"});
+		var dataFile = tmp.fileSync({dir: "./"});
 		let getDataLocation = new Promise(function(resolve, reject)
 		{
 			client.get(dbLocation, function(err, stream)
@@ -59,7 +58,7 @@ app.post("/ffdi", function(req, res)
 				{
 					reject(err);
 				}
-				stream.pipe(fs.createWriteStream(__dirname + "/" + dataFile.name));
+				//stream.pipe(fs.createWriteStream(__dirname + "/" + dataFile.name));
 				stream.on("finish", function()
 				{
 					//parse the data file path and add relevant data to variables
@@ -83,7 +82,7 @@ app.post("/ffdi", function(req, res)
 exports.app = functions.https.onRequest(app);
 
 //Local host
-app.listen(3000, function()
+app.listen(8080, function()
 {
-	console.log("Listening at port 3000");
+	console.log("Listening at port 8080");
 });
