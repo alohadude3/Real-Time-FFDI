@@ -1,4 +1,3 @@
-//Start loading everything
 window.onload = function()
 {
 	document.getElementById("longD").value = 0;

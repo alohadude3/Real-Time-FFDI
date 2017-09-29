@@ -30,7 +30,7 @@ app.post("/ffdi", function(req, res)
 	client.on("ready", function()
 	{
 		var dbLocation = "./anon/gen/clim_data/IDCKWCDEA0/tables/stations_db.txt";
-		var dataLocation = "./anon/gen/clim_data/IDCKWCDEA0/tables/stations_db.txt";
+		var dataLocation = "./anon/gen/clim_data/IDCKWCDEA0/tables/";
 		//Temp files for storing downloaded files
 		var databaseFile = tmp.fileSync({dir: "./"});
 		var dataFile = tmp.fileSync({dir: "./"});
@@ -38,6 +38,7 @@ app.post("/ffdi", function(req, res)
 		{
 			client.get(dbLocation, function(err, stream)
 			{
+				//download stations_db.txt
 				if (err)
 				{
 					reject(err);
@@ -45,7 +46,18 @@ app.post("/ffdi", function(req, res)
 				stream.pipe(fs.createWriteStream(__dirname + "/" + databaseFile.name));
 				stream.on("finish", function()
 				{
-					//parse the file and update the data file path
+					//parse through the stations
+					var fileContents = fs.readFileSync(databaseFile.name, "utf8").toLowerCase();
+					fileContents = fileContents.split("\n");
+					for (var i = 0; i < fileContents.length; i++)
+					{
+						fileContents[i] = fileContents[i].replace(new RegExp(/([a-z]|\(|\))\ ([a-z]|\(|\))/g), "$1_$2"); //replacing all the (spaces) in (char)(space)(char) with _
+						fileContents[i] = fileContents[i].replace(new RegExp(/\ \/\ /g), "___"); //replace (space)/(space) with ___
+						fileContents[i] = fileContents[i].replace(new RegExp(/_aws/g), ""); //removing all the _aws
+						fileContents[i] = fileContents[i].replace(new RegExp(/(\ )+/g), " "); //replaces all multiple spaces into 1 single space
+						fileContents[i] = fileContents[i].split(" ");
+					}
+					//find the neareste weather station
 				});
 			});
 			resolve();
@@ -54,6 +66,7 @@ app.post("/ffdi", function(req, res)
 		{
 			client.get(dataLocation, function(err, stream)
 			{
+				//download climate data file
 				if (err)
 				{
 					reject(err);
