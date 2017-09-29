@@ -8,8 +8,7 @@
     "firebase-functions": "^0.6.2",
     "ftp": "^0.3.10",
     "npm": "^3.10.10",
-    "promise": "^8.0.1",
-    "tmp": "0.0.33"
+    "promise": "^8.0.1"
   },
   "private": true
 }

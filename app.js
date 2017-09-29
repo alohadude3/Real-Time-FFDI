@@ -14,7 +14,7 @@ app.use(express.static(__dirname + "/client"));
 
 app.get("/", function(req, res)
 {
-	res.sendFile("index.html");
+	res.sendFile(__dirname + "/client/index.html");
 });
 
 app.post("/ffdi", function(req, res)
@@ -23,17 +23,13 @@ app.post("/ffdi", function(req, res)
 	user.host = "ftp.bom.gov.au";
 	user.longitude = req.body.longitude;
 	user.latitude = req.body.latitude;
-	var tmp = require("tmp");
-	tmp.setGracefulCleanup();
 	var client = new ftp();
 	//On connecting with BOM via ftp client
 	client.on("ready", function()
 	{
 		var dbLocation = "./anon/gen/clim_data/IDCKWCDEA0/tables/stations_db.txt";
 		var dataLocation = "./anon/gen/clim_data/IDCKWCDEA0/tables/";
-		//Temp files for storing downloaded files
-		var databaseFile = tmp.fileSync({dir: "./"});
-		var dataFile = tmp.fileSync({dir: "./"});
+		//tmp.setGracefulCleanup();
 		let getDataLocation = function()
 		{
 			return new Promise(function(resolve, reject)
@@ -45,26 +41,31 @@ app.post("/ffdi", function(req, res)
 					{
 						reject(err);
 					}
-					stream.pipe(fs.createWriteStream(__dirname + "/" + databaseFile.name));
-					stream.on("finish", function()
+					var readableStream;
+					var data = "";
+					stream.on("data", function(chunk)
+					{
+						data += chunk;
+					});
+					stream.on("end", function()
 					{
 						//parse through the stations
-						var fileContents = fs.readFileSync(databaseFile.name, "utf8").toLowerCase();
-						fileContents = fileContents.split("\n");
-						for (var i = 0; i < fileContents.length; i++)
+						data = data.toLowerCase();
+						data = data.split("\n");
+						for (var i = 0; i < data.length; i++)
 						{
-							fileContents[i] = fileContents[i].replace(new RegExp(/([a-z]|\(|\))\ ([a-z]|\(|\))/g), "$1_$2"); //replacing all the (spaces) in (char)(space)(char) with _
-							fileContents[i] = fileContents[i].replace(new RegExp(/\ \/\ /g), "___"); //replace (space)/(space) with ___
-							fileContents[i] = fileContents[i].replace(new RegExp(/_aws/g), ""); //removing all the _aws
-							fileContents[i] = fileContents[i].replace(new RegExp(/(\ )+/g), " "); //replaces all multiple spaces into 1 single space
-							fileContents[i] = fileContents[i].split(" ");
+							data[i] = data[i].replace(new RegExp(/([a-z]|\(|\))\ ([a-z]|\(|\))/g), "$1_$2"); //replacing all the (spaces) in (char)(space)(char) with _
+							data[i] = data[i].replace(new RegExp(/\ \/\ /g), "___"); //replace (space)/(space) with ___
+							data[i] = data[i].replace(new RegExp(/_aws/g), ""); //removing all the _aws
+							data[i] = data[i].replace(new RegExp(/(\ )+/g), " "); //replaces all multiple spaces into 1 single space
+							data[i] = data[i].split(" ");
 						}
 						//find the nearest weather station
 						var closestIndex = 0;
-						var closestDistance = Math.sqrt(Math.pow(fileContents[0][5] - user.longitude, 2) + Math.pow(fileContents[0][6] - user.latitude, 2));
-						for (var index = 1; index < fileContents.length; index++)
+						var closestDistance = Math.sqrt(Math.pow(data[0][5] - user.longitude, 2) + Math.pow(data[0][6] - user.latitude, 2));
+						for (var index = 1; index < data.length; index++)
 						{
-							var newDistance = Math.sqrt(Math.pow(fileContents[index][5] - user.longitude, 2) + Math.pow(fileContents[index][6] - user.latitude, 2));
+							var newDistance = Math.sqrt(Math.pow(data[index][5] - user.longitude, 2) + Math.pow(data[index][6] - user.latitude, 2));
 							if (newDistance < closestDistance)
 							{
 								closestDistance = newDistance;
@@ -72,9 +73,9 @@ app.post("/ffdi", function(req, res)
 							}
 						}
 						//update the directory name name
-						dataLocation = dataLocation.concat(fileContents[closestIndex][1].concat("/")); //state directory
-						dataLocation = dataLocation.concat(fileContents[closestIndex][3].concat("/")); //station directory
-						dataLocation = dataLocation.concat(fileContents[closestIndex][3].concat("-").concat((new Date()).getFullYear())); //year
+						dataLocation = dataLocation.concat(data[closestIndex][1].concat("/")); //state directory
+						dataLocation = dataLocation.concat(data[closestIndex][3].concat("/")); //station directory
+						dataLocation = dataLocation.concat(data[closestIndex][3].concat("-").concat((new Date()).getFullYear())); //year
 						dataLocation = dataLocation.concat(("0" + ((new Date()).getMonth() + 1)).slice(-2)); //month
 						dataLocation = dataLocation.concat(".csv"); //file extension
 						resolve();
@@ -93,16 +94,22 @@ app.post("/ffdi", function(req, res)
 					{
 						reject(err);
 					}
-					stream.pipe(fs.createWriteStream(__dirname + "/" + dataFile.name));
-					stream.on("finish", function()
+					var data = "";
+					stream.on("data", function(chunk)
+					{
+						data += chunk;
+					})
+					stream.on("end", function()
 					{
 						//parse the data file path and add relevant data to variables
+						data = data.split("\n");
+						data.splice(0, data.length - 2);
+						data.splice(data.length - 1, 1);
+						console.log(data);
 					});
 					//Cleanup
 					stream.once("close", function()
 					{
-						databaseFile.removeCallback();
-						dataFile.removeCallback();
 						client.end();
 						resolve();
 					});
@@ -115,10 +122,8 @@ app.post("/ffdi", function(req, res)
 		});
 	});
 	client.connect(user);
+	res.sendFile(__dirname + "/client/ffdi.html");
 });
-
-//Cloud functions
-exports.app = functions.https.onRequest(app);
 
 //Local host
 app.listen(8080, function()
