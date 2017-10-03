@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<script src="./js/jquery-3.1.1.min.js"></script>
+		<script src="./js/bootstrap.min.js"></script>
+		<script src="./js/ffdi.js"></script>
+		<meta charset="UTF-8">
+		<title>Real-Time FFDI</title>
+		<link href="./css/bootstrap.min.css" rel="stylesheet">
+		<link href="./css/stylesheet.css" rel="stylesheet">
+	</head>
+	<header>
+		<div>
+			<header>Real-Time McArthur Forest Fire Danger Index</header>
+		</div>
+	</header>
+	<body>
+		<div class="sectionContainer">
+			<div class="col-sm-4">
+					<label for="temp">Temperature (°C)</label>
+					<input id="temp" type="text" onkeypress="validateInput(event)" value="<%= user.temp %>" class="form-control inputBox" name="temp">
+					<span id="tempError" class="help-block"></span>
+			</div>
+			<div class="col-sm-4">
+					<label for"rh">Relative Humidity (%)</label>
+					<input id="rh" type="text" onkeypress="validateInput(event)" value="<%= user.rh %>" class="form-control inputBox" name="rh">
+					<span id="rhError" class="help-block"></span>
+			</div>
+			<div class="col-sm-4">
+					<label for"vel">Wind Speed (km/h)</label>
+					<input id="vel" type="text" onkeypress="validateInput(event)" value="<%= user.vel %>" class="form-control inputBox" name="vel">
+					<span id="velError" class="help-block"></span>
+			</div>
+		</div>
+		<div class="sectionContainer">
+			<div class="col-sm-4">
+				<label for"dslr">Days since last rain</label>
+				<input id="dslr" type="text" onkeypress="validateInput(event)" class="form-control inputBox" name="dslr">
+				<span id="dslrError" class="help-block"></span>
+			</div>
+			<div class="col-sm-4">
+				<label for"lr">Last rain (mm)</label>
+				<input id="lr" type="text" onkeypress="validateInput(event)" class="form-control inputBox" name="lr">
+				<span id="lrError" class="help-block"></span>
+			</div>
+			<div class="col-sm-4">
+				<label for"bkdi">Byram-Keetch Drought Index (0 - 200mm)</label>
+				<input id="bkdi" type="text" onkeypress="validateInput(event)" placeholder="Leave blank if unknown" class="form-control inputBox" name="bkdi">
+				<span id="bkdiError" class="help-block"></span>
+			</div>
+		</div>
+		<div class="sectionContainer">
+				<div class="buttonContainer">
+					<button type="submit" class="btn btn-primary center" id="submitButton" onclick=calculateIndex()>Calculate Index</button>
+				</div>
+		</div>
+	</body>
+</html>

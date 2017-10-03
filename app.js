@@ -8,13 +8,16 @@ const fs = require("fs");
 const parser = require("body-parser");
 const promise = require("promise");
 
+app.engine("html", require("ejs").renderFile);
+app.set("views", __dirname + "/views")
+app.set("view engine", "ejs");
 app.use(parser.json());
 app.use(parser.urlencoded({extended: true}));
-app.use(express.static(__dirname + "/client"));
+app.use(express.static(__dirname + "/views"));
 
 app.get("/", function(req, res)
 {
-	res.sendFile(__dirname + "/client/index.html");
+	res.render("index");
 });
 
 app.post("/ffdi", function(req, res)
@@ -108,10 +111,17 @@ app.post("/ffdi", function(req, res)
 						{
 							//parse the data file path and add relevant data to variables
 							data = data.split("\n");
-							data.splice(0, data.length - 2);
-							data.splice(data.length - 1, 1);
-							data = data[0].split(",");
-							console.log(data);
+							data.splice(0, 13);
+							for (var i = 0; i < data.length; i++)
+							{
+								data[i] = data[i].split(",");
+							}
+							user.station = data[data.length - 2][0]
+							user.date = data[data.length - 2][1]
+							user.temp = data[data.length - 2][5];
+							user.rh = data[data.length - 2][7];
+							user.vel = data[data.length - 2][9] * 3.6;
+							console.log(user);
 						});
 						stream.once("close", function()
 						{
@@ -132,10 +142,12 @@ app.post("/ffdi", function(req, res)
 			dataLocation = dataLocation.concat(("0" + ((new Date()).getMonth())).slice(-2)); //month
 			dataLocation = dataLocation.concat(".csv"); //file extension
 			return getClimateData();
+		}).then(function()
+		{
+			res.render("ffdi", {user: user});
 		});
 	});
 	client.connect(user);
-	res.sendFile(__dirname + "/client/ffdi.html");
 });
 
 //Local host

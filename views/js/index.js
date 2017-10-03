@@ -6,7 +6,6 @@ window.onload = function()
 	document.getElementById("latD").value = 0;
 	document.getElementById("latM").value = 0;
 	document.getElementById("latS").value = 0;
-	database = firebase.database();
 };
 
 function validateLongLat(event)
