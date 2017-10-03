@@ -26,7 +26,7 @@ function validateLongLat(event)
 
 function validateForm()
 {
-	var errors = 0;
+	var errors = false;
 	var longD = document.getElementById("longD").value;
 	var longM = document.getElementById("longM").value;
 	var longS = document.getElementById("longS").value;
@@ -34,18 +34,47 @@ function validateForm()
 	var latM = document.getElementById("latM").value;
 	var latS = document.getElementById("latS").value;
 	/** Empty check */
-	errors += emptyCheck(longD, "longDError");
-	errors += emptyCheck(longM, "longMError");
-	errors += emptyCheck(longS, "longSError");
-	errors += emptyCheck(latD, "latDError");
-	errors += emptyCheck(latM, "latMError");
-	errors += emptyCheck(latS, "latSError");
-	/** Range check for minutes and seconds */
-	errors += rangeCheck(longM, "longMError");
-	errors += rangeCheck(longS, "longSError");
-	errors += rangeCheck(latM, "latMError");
-	errors += rangeCheck(latS, "latSError");
-	if (errors == 0)
+	if (emptyCheck(longD, "longDError"))
+	{
+		errors = true;
+	}
+	if (emptyCheck(longM, "longMError"))
+	{
+		errors = true;
+	}
+	else if (rangeCheck(longM, "longMError"))
+	{
+		errors = true;
+	}
+	if (emptyCheck(longS, "longSError"))
+	{
+		errors = true;
+	}
+	else if (rangeCheck(longS, "longSError"))
+	{
+		errors = true;
+	}
+	if (emptyCheck(latD, "latDError"))
+	{
+		errors = true;
+	}
+	if (emptyCheck(latM, "latMError"))
+	{
+		errors = true;
+	}
+	else if (rangeCheck(latM, "latMError"))
+	{
+		errors = true;
+	}
+	if (emptyCheck(latS, "latSError"))
+	{
+		errors = true;
+	}
+	else if (rangeCheck(latS, "latSError"))
+	{
+		errors = true;
+	}
+	if (!errors)
 	{
 		var longitude = parseFloat(longD);
 		longitude += parseFloat(longM / 60) + parseFloat(longS / 3600);
@@ -61,7 +90,7 @@ function validateForm()
 		}
 		if (longitude <= -44 || longitude >= -10 || latitude >= 154|| latitude <= 113)
 		{
-			alert("Coordinates must be within Australia.\nNorth bound: 10 degrees.\nSouth bound: -44 degrees.\nEast bound: 154 degrees.\nWest bound: 113 degrees.");
+			alert("Coordinates must be within Australia.\nNorth bound: -10 degrees.\nSouth bound: -44 degrees.\nEast bound: 154 degrees.\nWest bound: 113 degrees.");
 			return false;
 		}
 		else
@@ -77,9 +106,9 @@ function validateForm()
 	}
 }
 
-function isInt(value)
+function isInt(input)
 {
-	return !isNaN(value) && parseInt(value) == value && !isNaN(parseInt(value, 10));
+	return !isNaN(input) && parseInt(input) == input && !isNaN(parseInt(input, 10));
 }
 
 function emptyCheck(input, errorField)
@@ -88,29 +117,26 @@ function emptyCheck(input, errorField)
 	{
 		document.getElementById(errorField).textContent = "Cannot be empty";
 		document.getElementById(errorField).style.color = "red";
-		return 1;
+		return true;
 	}
 	else
 	{
 		document.getElementById(errorField).textContent = "";
-		return 0;
+		return false;
 	}
 }
 
 function rangeCheck(input, errorField)
 {
-	if (input != null && input != "")
+	if (input < 0 || input >= 60)
 	{
-		if (input < 0 || input >= 60)
-		{
-			document.getElementById(errorField).textContent = "Must be between 0 and 59 (inclusive)";
-			document.getElementById(errorField).style.color = "red";
-			return 1;
-		}
-		else
-		{
-			document.getElementById(errorField).textContent = "";
-			return 0;
-		}
+		document.getElementById(errorField).textContent = "Must be between 0 and 59 (inclusive)";
+		document.getElementById(errorField).style.color = "red";
+		return true;
+	}
+	else
+	{
+		document.getElementById(errorField).textContent = "";
+		return false;
 	}
 }

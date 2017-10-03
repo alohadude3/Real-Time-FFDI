@@ -17,11 +17,13 @@ app.use(express.static(__dirname + "/views"));
 
 app.get("/", function(req, res)
 {
+	console.log("User connected.");
 	res.render("index");
 });
 
 app.post("/ffdi", function(req, res)
 {
+	console.log("User requested for (" + req.body.longitude + ", " + req.body.latitude + ")");
 	var user = new Object();
 	user.host = "ftp.bom.gov.au";
 	user.longitude = req.body.longitude;
@@ -77,6 +79,9 @@ app.post("/ffdi", function(req, res)
 									closestIndex = index;
 								}
 							}
+							//get the coordinates
+							user.stationLong = data[closestIndex][5];
+							user.stationLat = data[closestIndex][6];
 							//update the directory name name
 							dataLocation = dataLocation.concat(data[closestIndex][1].concat("/")); //state directory
 							dataLocation = dataLocation.concat(data[closestIndex][3].concat("/")); //station directory

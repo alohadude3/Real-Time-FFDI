@@ -35,12 +35,12 @@
 		<div class="sectionContainer">
 			<div class="col-sm-4">
 				<label for"dslr">Days since last rain</label>
-				<input id="dslr" type="text" onkeypress="validateInput(event)" class="form-control inputBox" name="dslr">
+				<input id="dslr" type="text" onkeypress="validateInput(event)" value="<%= user.dslr %>" class="form-control inputBox" name="dslr">
 				<span id="dslrError" class="help-block"></span>
 			</div>
 			<div class="col-sm-4">
 				<label for"lr">Last rain (mm)</label>
-				<input id="lr" type="text" onkeypress="validateInput(event)" class="form-control inputBox" name="lr">
+				<input id="lr" type="text" onkeypress="validateInput(event)" value="<%= user.lr %>" class="form-control inputBox" name="lr">
 				<span id="lrError" class="help-block"></span>
 			</div>
 			<div class="col-sm-4">
@@ -51,7 +51,8 @@
 		</div>
 		<div class="sectionContainer">
 				<div class="buttonContainer">
-					<button type="submit" class="btn btn-primary center" id="submitButton" onclick=calculateIndex()>Calculate Index</button>
+					<body>Data retrieved from <%= user.station %> at (<%= user.stationLong %>, <%= user.stationLat %>). The data is correct as of <%= user.date %><br></body>
+					<button type="submit" class="btn btn-primary center" id="submitButton" onclick=validationCheck()>Calculate Index</button>
 				</div>
 		</div>
 	</body>

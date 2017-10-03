@@ -21,12 +21,85 @@ function validateInput(event)
 
 function validationCheck()
 {
-
-}
-
-function isInt(value)
-{
-	return !isNaN(value) && parseInt(value) == value && !isNaN(parseInt(value, 10));
+	var errors = false;
+	var temp = document.getElementById("temp").value;
+	var rh = document.getElementById("rh").value;
+	var vel = document.getElementById("vel").value;
+	var dslr = document.getElementById("dslr").value;
+	var lr = document.getElementById("lr").value;
+	var bkdi = document.getElementById("bkdi").value;
+	if (emptyCheck(temp, "tempError"))
+	{
+		errors = true;
+	}
+	else if (intCheck(temp, "tempError"))
+	{
+		errors = true;
+	}
+	else if (rangeCheckWithoutUpper(temp, "tempError", 0))
+	{
+		errors = true;
+	}
+	if (emptyCheck(rh, "rhError"))
+	{
+		errors = true;
+	}
+	else if (intCheck(rh, "rhError"))
+	{
+		errors = true;
+	}
+	else if (rangeCheck(rh, "rhError", 0, 100))
+	{
+		errors = true;
+	}
+	if (emptyCheck(vel, "velError"))
+	{
+		errors = true;
+	}
+	else if (intCheck(vel, "velError"))
+	{
+		errors = true;
+	}
+	else if (rangeCheckWithoutUpper(vel, "velError", 0))
+	{
+		errors = true;
+	}
+	if (emptyCheck(dslr, "dslrError"))
+	{
+		errors = true;
+	}
+	else if (intCheck(dslr, "dslrError"))
+	{
+		errors = true;
+	}
+	else if (rangeCheckWithoutUpper(dslr, "dslrError", 0))
+	{
+		errors = true;
+	}
+	if (emptyCheck(lr, "lrError"))
+	{
+		errors = true;
+	}
+	else if (intCheck(lr, "lrError"))
+	{
+		errors = true;
+	}
+	else if (rangeCheckWithoutUpper(lr, "lrError", 0))
+	{
+		errors = true;
+	}
+	if (intCheck(bkdi, "bkdiError"))
+	{
+		errors = true;
+	}
+	else if (rangeCheck(bkdi, "bkdiError", 0, 200))
+	{
+		errors = true;
+	}
+	if (!errors)
+	{
+		calculateIndex();
+	}
 }
 
 function emptyCheck(input, errorField)
@@ -35,12 +108,57 @@ function emptyCheck(input, errorField)
 	{
 		document.getElementById(errorField).textContent = "Cannot be empty";
 		document.getElementById(errorField).style.color = "red";
-		return 1;
+		return true;
 	}
 	else
 	{
 		document.getElementById(errorField).textContent = "";
-		return 0;
+		return false;
+	}
+}
+
+function intCheck(input, errorField)
+{
+	if (isNaN(input))
+	{
+		document.getElementById(errorField).textContent = "Must be a number";
+		document.getElementById(errorField).style.color = "red";
+		return true;
+	}
+	else
+	{
+		document.getElementById(errorField).textContent = "";
+		return false;
+	}
+}
+
+function rangeCheck(input, errorField, lower, upper)
+{
+	if (input < lower || input > upper)
+	{
+		document.getElementById(errorField).textContent = "Must be between " + lower + " and " + upper + " (inclusive)";
+		document.getElementById(errorField).style.color = "red";
+		return true;
+	}
+	else
+	{
+		document.getElementById(errorField).textContent = "";
+		return false;
+	}
+}
+
+function rangeCheckWithoutUpper(input, errorField, lower)
+{
+	if (input < lower)
+	{
+		document.getElementById(errorField).textContent = "Must be " + lower + " or above";
+		document.getElementById(errorField).style.color = "red";
+		return true;
+	}
+	else
+	{
+		document.getElementById(errorField).textContent = "";
+		return false;
 	}
 }
 
