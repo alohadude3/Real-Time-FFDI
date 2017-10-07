@@ -7,6 +7,7 @@ const ftp = require("ftp");
 const fs = require("fs");
 const parser = require("body-parser");
 const promise = require("promise");
+const events = require("events");
 
 app.engine("html", require("ejs").renderFile);
 app.set("views", __dirname + "/views")
@@ -25,16 +26,21 @@ app.post("/ffdi", function(req, res)
 {
 	console.log("User requested for (" + req.body.longitude + ", " + req.body.latitude + ")");
 	var user = new Object();
+	var month;
+	var lastDate;
 	user.host = "ftp.bom.gov.au";
 	user.longitude = req.body.longitude;
 	user.latitude = req.body.latitude;
+	user.dslr = 0;
+	user.lr = 0;
+	var eventdslr = new events.EventEmitter();
 	var client = new ftp();
 	//On connecting with BOM via ftp client
 	client.on("ready", function()
 	{
 		var dbLocation = "./anon/gen/clim_data/IDCKWCDEA0/tables/stations_db.txt";
 		var dataLocation = "./anon/gen/clim_data/IDCKWCDEA0/tables/";
-		//tmp.setGracefulCleanup();
+
 		let getDataLocation = function()
 		{
 			return new Promise(function(resolve, reject)
@@ -94,6 +100,7 @@ app.post("/ffdi", function(req, res)
 				});
 			});
 		}
+
 		let getClimateData = function()
 		{
 			return new Promise(function(resolve, reject)
@@ -126,17 +133,120 @@ app.post("/ffdi", function(req, res)
 							user.temp = data[data.length - 2][5];
 							user.rh = data[data.length - 2][7];
 							user.vel = data[data.length - 2][9] * 3.6;
-							console.log(user);
+							//if it hasn't rained today, then defaults to 1 day since last rain and add from there
+							if (data[data.length - 2][3] == 0)
+							{
+								user.dslr = 1;
+							}
 						});
 						stream.once("close", function()
 						{
-							client.end();
 							resolve();
 						});
 					}
 				});
 			});
 		}
+
+		eventdslr.on("get", function()
+		{
+			checkForRain().then(function()
+			{
+				if (user.lr == 0)
+				{
+					eventdslr.emit("get");
+				}
+				else
+				{
+					eventdslr.emit("finish");
+				}
+			}).catch(function(err)
+			{
+				console.log(err);
+			});
+		});
+
+		eventdslr.on("finish", function()
+		{
+			console.log(user);
+			res.render("ffdi", {user: user});
+		});
+
+		let checkForRain = function()
+		{
+			return new Promise(function(resolve, reject)
+			{
+				client.get(dataLocation, function(err, stream)
+				{
+					//download climate data file
+					if (err)
+					{
+						reject(err);
+					}
+					else
+					{
+						var data = "";
+						stream.on("data", function(chunk)
+						{
+							data += chunk;
+						});
+						stream.on("end", function()
+						{
+							//parse the data file path and add relevant data to variables
+							data = data.split("\n");
+							data.splice(0, 13);
+							data.splice(-1, 1);
+							for (var i = 0; i < data.length; i++)
+							{
+								data[i] = data[i].split(",");
+							}
+							for (var i = data.length - 1; i >= 0; i--)
+							{
+								if (data[i][3] == 0)
+								{
+									if (data[i][1] != lastDate)
+									{
+										user.dslr += 1;
+										lastDate = data[i][1];
+									}
+								}
+								else
+								{
+									user.lr = data[i][3];
+									break;
+								}
+							}
+							if (user.lr != 0)
+							{
+								client.end();
+								resolve();
+							}
+							else
+							{
+								if (month > 1)
+								{
+									month--;
+									//get the month before
+									dataLocation = dataLocation.substring(0, dataLocation.length - 6);
+									dataLocation = dataLocation.concat(("0" + month).slice(-2)); //month
+									dataLocation = dataLocation.concat(".csv"); //file extension
+								}
+								else
+								{
+									month = 12;
+									//get the year before
+									dataLocation = dataLocation.substring(0, dataLocation.length - 10);
+									dataLocation = dataLocation.concat((new Date()).getFullYear()); //year
+									dataLocation = dataLocation.concat("12.csv"); //file extension
+								}
+								eventdslr.emit("get");
+							}
+						});
+					}
+				});
+			});
+		}
+
 		getDataLocation().then(function()
 		{
 			return getClimateData();
@@ -149,7 +259,12 @@ app.post("/ffdi", function(req, res)
 			return getClimateData();
 		}).then(function()
 		{
-			res.render("ffdi", {user: user});
+			month = parseInt(dataLocation.substring(dataLocation.length - 6, dataLocation.length - 4));
+			lastDate = user.date;
+			eventdslr.emit("get");
+		}).catch(function(err)
+		{
+			console.log(err);
 		});
 	});
 	client.connect(user);
