@@ -147,31 +147,7 @@ app.post("/ffdi", function(req, res)
 				});
 			});
 		}
-
-		eventdslr.on("get", function()
-		{
-			checkForRain().then(function()
-			{
-				if (user.lr == 0)
-				{
-					eventdslr.emit("get");
-				}
-				else
-				{
-					eventdslr.emit("finish");
-				}
-			}).catch(function(err)
-			{
-				console.log(err);
-			});
-		});
-
-		eventdslr.on("finish", function()
-		{
-			console.log(user);
-			res.render("ffdi", {user: user});
-		});
-
+		
 		let checkForRain = function()
 		{
 			return new Promise(function(resolve, reject)
@@ -219,7 +195,6 @@ app.post("/ffdi", function(req, res)
 							if (user.lr != 0)
 							{
 								client.end();
-								resolve();
 							}
 							else
 							{
@@ -239,13 +214,37 @@ app.post("/ffdi", function(req, res)
 									dataLocation = dataLocation.concat((new Date()).getFullYear()); //year
 									dataLocation = dataLocation.concat("12.csv"); //file extension
 								}
-								eventdslr.emit("get");
 							}
+							resolve();
 						});
 					}
 				});
 			});
 		}
+
+		eventdslr.on("get", function()
+		{
+			checkForRain().then(function()
+			{
+				if (user.lr == 0)
+				{
+					eventdslr.emit("get");
+				}
+				else
+				{
+					eventdslr.emit("finish");
+				}
+			}).catch(function(err)
+			{
+				console.log(err);
+			});
+		});
+
+		eventdslr.on("finish", function()
+		{
+			console.log(user);
+			res.render("ffdi", {user: user});
+		});
 
 		getDataLocation().then(function()
 		{
