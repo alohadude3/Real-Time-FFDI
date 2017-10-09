@@ -38,6 +38,8 @@ app.post("/ffdi", function(req, res)
 	//On connecting with BOM via ftp client
 	client.on("ready", function()
 	{
+		"use strict";
+
 		var dbLocation = "./anon/gen/clim_data/IDCKWCDEA0/tables/stations_db.txt";
 		var dataLocation = "./anon/gen/clim_data/IDCKWCDEA0/tables/";
 
