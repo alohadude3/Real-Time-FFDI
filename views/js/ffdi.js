@@ -173,15 +173,55 @@ function calculateIndex()
 	if (document.getElementById("bkdi").value == "")
 	{
 		var df = ((0.191 * (200 + 104) * Math.pow(dslr + 1, 1.5)) / (3.52 * Math.pow(dslr + 1, 1.5) + lr - 1));
-		var ffdiMax = 2 * Math.exp(-0.45 + 0.987 * Math.log(df) - 0.0345 * rh + 0.0338 * temp + 0.0234 * vel);
+		var ffdi = 2 * Math.exp(-0.45 + 0.987 * Math.log(df) - 0.0345 * rh + 0.0338 * temp + 0.0234 * vel);
 		var df = ((0.191 * (0 + 104) * Math.pow(dslr + 1, 1.5)) / (3.52 * Math.pow(dslr + 1, 1.5) + lr - 1));
 		var ffdiMin = 2 * Math.exp(-0.45 + 0.987 * Math.log(df) - 0.0345 * rh + 0.0338 * temp + 0.0234 * vel);
-		alert("Your FFDI ranges from " + ffdiMin + " to " + ffdiMax + " depending on your BKDI.");
+		showAlert("Your FFDI ranges from " + ffdiMin + " to " + ffdi + " depending on your BKDI.", ffdi);
 	}
 	else
 	{
 		var df = ((0.191 * (bkdi + 104) * Math.pow(dslr + 1, 1.5)) / (3.52 * Math.pow(dslr + 1, 1.5) + lr - 1));
 		var ffdi = 2 * Math.exp(-0.45 + 0.987 * Math.log(df) - 0.0345 * rh + 0.0338 * temp + 0.0234 * vel);
-		alert("Your FFDI is " + ffdi);
+		showAlert("Your FFDI is " + ffdi, ffdi);
 	}
+}
+
+function showAlert(message, ffdi)
+{
+	var type;
+	var severity;
+	if (ffdi <= 11)
+	{
+		type = "success";
+		severity = "Low-Moderate";
+	}
+	else if (ffdi <= 24)
+	{
+		type = "info";
+		severity = "High";
+	}
+	else if (ffdi <= 49)
+	{
+		type = "warning";
+		severity = "Very High"
+	}
+	else if (ffdi <= 74)
+	{
+		type = "danger";
+		severity = "Severe"
+	}
+	else if (ffdi <= 99)
+	{
+		type = "danger";
+		severity = "Extreme";
+	}
+	else
+	{
+		type = "danger";
+		severity = "Catastrophic (Code Red)";
+	}
+	$("#alert").html("<div class='alert alert-" + type + "'>"
+	+ "Severity: " + severity + "<br>" + message
+	+ "</div>");
+	$("#alert").show();
 }

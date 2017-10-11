@@ -90,7 +90,7 @@ function validateForm()
 		}
 		if (longitude <= -44 || longitude >= -10 || latitude >= 154|| latitude <= 113)
 		{
-			alert("Coordinates must be within Australia.\nNorth bound: -10 degrees.\nSouth bound: -44 degrees.\nEast bound: 154 degrees.\nWest bound: 113 degrees.");
+			showAlert();
 			return false;
 		}
 		else
@@ -139,4 +139,13 @@ function rangeCheck(input, errorField)
 		document.getElementById(errorField).textContent = "";
 		return false;
 	}
+}
+
+function showAlert()
+{
+	$("#alert").html("<div class='alert alert-danger alert-dismissable'>"
+	+ "<a href='#' class='close' data-dismiss='alert' aria-label='close'>x</a>"
+	+ "Coordinates must be within Australia.<br>Longitude: 10 degrees south, 44 degrees south.<br>Latitude: 154 degrees east, 113 degrees east."
+	+ "</div>");
+	$("#alert").show();
 }
