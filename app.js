@@ -63,6 +63,7 @@ app.post("/ffdi", function(req, res)
 						});
 						stream.on("end", function()
 						{
+							console.log("Downloaded weather stations database.");
 							//parse through the stations
 							data = data.toLowerCase();
 							data = data.split("\n");
@@ -95,6 +96,7 @@ app.post("/ffdi", function(req, res)
 							dataLocation = dataLocation.concat(data[closestIndex][3].concat("-").concat((new Date()).getFullYear())); //year
 							dataLocation = dataLocation.concat(("0" + ((new Date()).getMonth() + 1)).slice(-2)); //month
 							dataLocation = dataLocation.concat(".csv"); //file extension
+							console.log("Data file location: " + dataLocation);
 							resolve();
 						});
 					}
@@ -256,6 +258,15 @@ app.post("/ffdi", function(req, res)
 			dataLocation = dataLocation.substring(0, dataLocation.length - 6);
 			dataLocation = dataLocation.concat(("0" + ((new Date()).getMonth())).slice(-2)); //month
 			dataLocation = dataLocation.concat(".csv"); //file extension
+			console.log("Try previous month at: " + dataLocation);
+			return getClimateData();
+		}).catch(function()
+		{
+			//get the year before current if current year file does not exist
+			dataLocation = dataLocation.substring(0, dataLocation.length - 10);
+			dataLocation = dataLocation.concat((new Date()).getFullYear() - 1); //year
+			dataLocation = dataLocation.concat("12.csv"); //file extension
+			console.log("Try previous year at: " + dataLocation);
 			return getClimateData();
 		}).then(function()
 		{
